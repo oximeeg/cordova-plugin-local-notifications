@@ -42,233 +42,225 @@ import static de.appplant.cordova.plugin.notification.trigger.IntervalTrigger.Un
  */
 public final class Request {
 
-    // Key name for bundled extras
-    static final String EXTRA_OCCURRENCE = "NOTIFICATION_OCCURRENCE";
+  // Key name for bundled extras
+  static final String EXTRA_OCCURRENCE = "NOTIFICATION_OCCURRENCE";
 
-    // Key name for bundled extras
-    public static final String EXTRA_LAST = "NOTIFICATION_LAST";
+  // Key name for bundled extras
+  public static final String EXTRA_LAST = "NOTIFICATION_LAST";
 
-    // The options spec
-    private final Options options;
+  // The options spec
+  private final Options options;
 
-    // The right trigger for the options
-    private final DateTrigger trigger;
+  // The right trigger for the options
+  private final DateTrigger trigger;
 
-    // How often the trigger shall occur
-    private final int count;
+  // How often the trigger shall occur
+  private final int count;
 
-    // The trigger spec
-    private final JSONObject spec;
+  // The trigger spec
+  private final JSONObject spec;
 
-    // The current trigger date
-    private Date triggerDate;
+  // The current trigger date
+  private Date triggerDate;
 
-    /**
-     * Create a request with a base date specified through the passed options.
-     *
-     * @param options The options spec.
-     */
-    public Request(Options options) {
-        this.options     = options;
-        this.spec        = options.getTrigger();
-        this.count       = Math.max(spec.optInt("count"), 1);
-        this.trigger     = buildTrigger();
-        this.triggerDate = trigger.getNextTriggerDate(getBaseDate());
+  /**
+   * Create a request with a base date specified through the passed options.
+   *
+   * @param options The options spec.
+   */
+  public Request(Options options) {
+    this.options = options;
+    this.spec = options.getTrigger();
+    this.count = Math.max(spec.optInt("count"), 1);
+    this.trigger = buildTrigger();
+    this.triggerDate = trigger.getNextTriggerDate(getBaseDate());
+  }
+
+  /**
+   * Create a request with a base date specified via base argument.
+   *
+   * @param options The options spec.
+   * @param base    The base date from where to calculate the next trigger.
+   */
+  public Request(Options options, Date base) {
+    this.options = options;
+    this.spec = options.getTrigger();
+    this.count = Math.max(spec.optInt("count"), 1);
+    this.trigger = buildTrigger();
+    this.triggerDate = trigger.getNextTriggerDate(base);
+  }
+
+  /**
+   * Gets the options spec.
+   */
+  public Options getOptions() {
+    return options;
+  }
+
+  /**
+   * The identifier for the request.
+   *
+   * @return The notification ID as the string
+   */
+  String getIdentifier() {
+    return options.getId().toString() + "-" + getOccurrence();
+  }
+
+  /**
+   * The value of the internal occurrence counter.
+   */
+  int getOccurrence() {
+    return trigger.getOccurrence();
+  }
+
+  /**
+   * If there's one more trigger date to calculate.
+   */
+  private boolean hasNext() {
+    return triggerDate != null && getOccurrence() <= count;
+  }
+
+  /**
+   * Moves the internal occurrence counter by one.
+   */
+  boolean moveNext() {
+    if (hasNext()) {
+      triggerDate = getNextTriggerDate();
+    } else {
+      triggerDate = null;
     }
 
-    /**
-     * Create a request with a base date specified via base argument.
-     *
-     * @param options The options spec.
-     * @param base    The base date from where to calculate the next trigger.
-     */
-    public Request(Options options, Date base) {
-        this.options     = options;
-        this.spec        = options.getTrigger();
-        this.count       = Math.max(spec.optInt("count"), 1);
-        this.trigger     = buildTrigger();
-        this.triggerDate = trigger.getNextTriggerDate(base);
+    return this.triggerDate != null;
+  }
+
+  /**
+   * Gets the current trigger date.
+   *
+   * @return null if there's no trigger date.
+   */
+  public Date getTriggerDate() {
+    Calendar now = Calendar.getInstance();
+
+    if (triggerDate == null)
+      return null;
+
+    long time = triggerDate.getTime();
+
+    if ((now.getTimeInMillis() - time) > 60000)
+      return null;
+
+    if (time >= spec.optLong("before", time + 1))
+      return null;
+
+    return triggerDate;
+  }
+
+  /**
+   * Gets the next trigger date based on the current trigger date.
+   */
+  private Date getNextTriggerDate() {
+    return trigger.getNextTriggerDate(triggerDate);
+  }
+
+  /**
+   * Build the trigger specified in options.
+   */
+  private DateTrigger buildTrigger() {
+    Object every = spec.opt("every");
+
+    if (every instanceof JSONObject) {
+      List<Integer> cmp1 = getMatchingComponents();
+      List<Integer> cmp2 = getSpecialMatchingComponents();
+
+      return new MatchTrigger(cmp1, cmp2);
     }
 
-    /**
-     * Gets the options spec.
-     */
-    public Options getOptions() {
-        return options;
+    Unit unit = getUnit();
+    int ticks = getTicks();
+
+    return new IntervalTrigger(ticks, unit);
+  }
+
+  /**
+   * Gets the unit value.
+   */
+  private Unit getUnit() {
+    Object every = spec.opt("every");
+    String unit = "SECOND";
+
+    if (spec.has("unit")) {
+      unit = spec.optString("unit", "second");
+    } else if (every instanceof String) {
+      unit = spec.optString("every", "second");
     }
 
-    /**
-     * The identifier for the request.
-     *
-     * @return The notification ID as the string
-     */
-    String getIdentifier() {
-        return options.getId().toString() + "-" + getOccurrence();
+    return Unit.valueOf(unit.toUpperCase());
+  }
+
+  /**
+   * Gets the tick value.
+   */
+  private int getTicks() {
+    Object every = spec.opt("every");
+    int ticks = 0;
+
+    if (spec.has("at")) {
+      ticks = 0;
+    } else if (spec.has("in")) {
+      ticks = spec.optInt("in", 0);
+    } else if (every instanceof String) {
+      ticks = 1;
+    } else if (!(every instanceof JSONObject)) {
+      ticks = spec.optInt("every", 0);
     }
 
-    /**
-     * The value of the internal occurrence counter.
-     */
-    int getOccurrence() {
-        return trigger.getOccurrence();
+    return ticks;
+  }
+
+  /**
+   * Gets an array of all date parts to construct a datetime instance.
+   *
+   * @return [min, hour, day, month, year]
+   */
+  private List<Integer> getMatchingComponents() {
+    JSONObject every = spec.optJSONObject("every");
+
+    return Arrays.asList(
+        (Integer) every.opt("minute"),
+        (Integer) every.opt("hour"),
+        (Integer) every.opt("day"),
+        (Integer) every.opt("month"),
+        (Integer) every.opt("year"));
+  }
+
+  /**
+   * Gets an array of all date parts to construct a datetime instance.
+   *
+   * @return [min, hour, day, month, year]
+   */
+  private List<Integer> getSpecialMatchingComponents() {
+    JSONObject every = spec.optJSONObject("every");
+
+    return Arrays.asList(
+        (Integer) every.opt("weekday"),
+        (Integer) every.opt("weekdayOrdinal"),
+        (Integer) every.opt("weekOfMonth"),
+        (Integer) every.opt("quarter"));
+  }
+
+  /**
+   * Gets the base date from where to calculate the next trigger date.
+   */
+  private Date getBaseDate() {
+    if (spec.has("at")) {
+      return new Date(spec.optLong("at", 0));
+    } else if (spec.has("firstAt")) {
+      return new Date(spec.optLong("firstAt", 0));
+    } else if (spec.has("after")) {
+      return new Date(spec.optLong("after", 0));
+    } else {
+      return new Date();
     }
-
-    /**
-     * If there's one more trigger date to calculate.
-     */
-    private boolean hasNext() {
-        return triggerDate != null && getOccurrence() <= count;
-    }
-
-    /**
-     * Moves the internal occurrence counter by one.
-     */
-    boolean moveNext() {
-        if (hasNext()) {
-            triggerDate = getNextTriggerDate();
-        } else {
-            triggerDate = null;
-        }
-
-        return this.triggerDate != null;
-    }
-
-    /**
-     * Gets the current trigger date.
-     *
-     * @return null if there's no trigger date.
-     */
-    public Date getTriggerDate() {
-        Calendar now = Calendar.getInstance();
-
-        if (triggerDate == null)
-            return null;
-
-        long time = triggerDate.getTime();
-
-        if ((now.getTimeInMillis() - time) > 60000)
-            return null;
-
-        if (time >= spec.optLong("before", time + 1))
-            return null;
-
-        return triggerDate;
-    }
-
-    /**
-     * Gets the next trigger date based on the current trigger date.
-     */
-    private Date getNextTriggerDate() {
-        return trigger.getNextTriggerDate(triggerDate);
-    }
-
-    /**
-     * Build the trigger specified in options.
-     */
-    private DateTrigger buildTrigger() {
-        Object every = spec.opt("every");
-
-        if (every instanceof JSONObject) {
-            List<Integer> cmp1 = getMatchingComponents();
-            List<Integer> cmp2 = getSpecialMatchingComponents();
-
-            return new MatchTrigger(cmp1, cmp2);
-        }
-
-        Unit unit = getUnit();
-        int ticks = getTicks();
-
-        return new IntervalTrigger(ticks, unit);
-    }
-
-    /**
-     * Gets the unit value.
-     */
-    private Unit getUnit() {
-        Object every = spec.opt("every");
-        String unit  = "SECOND";
-
-        if (spec.has("unit")) {
-            unit = spec.optString("unit", "second");
-        } else
-        if (every instanceof String) {
-            unit = spec.optString("every", "second");
-        }
-
-        return Unit.valueOf(unit.toUpperCase());
-    }
-
-    /**
-     * Gets the tick value.
-     */
-    private int getTicks() {
-        Object every = spec.opt("every");
-        int ticks    = 0;
-
-        if (spec.has("at")) {
-            ticks = 0;
-        } else
-        if (spec.has("in")) {
-            ticks = spec.optInt("in", 0);
-        } else
-        if (every instanceof String) {
-            ticks = 1;
-        } else
-        if (!(every instanceof JSONObject)) {
-            ticks = spec.optInt("every", 0);
-        }
-
-        return ticks;
-    }
-
-    /**
-     * Gets an array of all date parts to construct a datetime instance.
-     *
-     * @return [min, hour, day, month, year]
-     */
-    private List<Integer> getMatchingComponents() {
-        JSONObject every = spec.optJSONObject("every");
-
-        return Arrays.asList(
-                (Integer) every.opt("minute"),
-                (Integer) every.opt("hour"),
-                (Integer) every.opt("day"),
-                (Integer) every.opt("month"),
-                (Integer) every.opt("year")
-        );
-    }
-
-    /**
-     * Gets an array of all date parts to construct a datetime instance.
-     *
-     * @return [min, hour, day, month, year]
-     */
-    private List<Integer> getSpecialMatchingComponents() {
-        JSONObject every = spec.optJSONObject("every");
-
-        return Arrays.asList(
-                (Integer) every.opt("weekday"),
-                (Integer) every.opt("weekdayOrdinal"),
-                (Integer) every.opt("weekOfMonth"),
-                (Integer) every.opt("quarter")
-        );
-    }
-
-    /**
-     * Gets the base date from where to calculate the next trigger date.
-     */
-    private Date getBaseDate() {
-        if (spec.has("at")) {
-            return new Date(spec.optLong("at", 0));
-        } else
-        if (spec.has("firstAt")) {
-            return new Date(spec.optLong("firstAt", 0));
-        } else
-        if (spec.has("after")) {
-            return new Date(spec.optLong("after", 0));
-        } else {
-            return new Date();
-        }
-    }
+  }
 
 }

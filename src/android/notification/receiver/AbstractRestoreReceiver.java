@@ -48,47 +48,48 @@ import static android.os.Build.VERSION.SDK_INT;
  */
 abstract public class AbstractRestoreReceiver extends BroadcastReceiver {
 
-    /**
-     * Called on device reboot.
-     *
-     * @param context Application context
-     * @param intent  Received intent with content data
-     */
-    @Override
-    public void onReceive (Context context, Intent intent) {
-        String action = intent.getAction();
+  /**
+   * Called on device reboot.
+   *
+   * @param context Application context
+   * @param intent  Received intent with content data
+   */
+  @Override
+  public void onReceive(Context context, Intent intent) {
+    String action = intent.getAction();
 
-        if (SDK_INT >= 24) {
-          UserManager um = (UserManager) context.getSystemService(UserManager.class);
-          if (um == null || um.isUserUnlocked() == false) return;
-        }
-
-        Manager mgr               = Manager.getInstance(context);
-        List<JSONObject> toasts = mgr.getOptions();
-
-        for (JSONObject data : toasts) {
-            Options options    = new Options(context, data);
-            Request request    = new Request(options);
-            Builder builder    = new Builder(options);
-            Notification toast = buildNotification(builder);
-
-            onRestore(request, toast);
-        }
+    if (SDK_INT >= 24) {
+      UserManager um = (UserManager) context.getSystemService(UserManager.class);
+      if (um == null || um.isUserUnlocked() == false)
+        return;
     }
 
-    /**
-     * Called when a local notification need to be restored.
-     *
-     * @param request Set of notification options.
-     * @param toast   Wrapper around the local notification.
-     */
-    abstract public void onRestore (Request request, Notification toast);
+    Manager mgr = Manager.getInstance(context);
+    List<JSONObject> toasts = mgr.getOptions();
 
-    /**
-     * Build notification specified by options.
-     *
-     * @param builder Notification builder.
-     */
-    abstract public Notification buildNotification (Builder builder);
+    for (JSONObject data : toasts) {
+      Options options = new Options(context, data);
+      Request request = new Request(options);
+      Builder builder = new Builder(options);
+      Notification toast = buildNotification(builder);
+
+      onRestore(request, toast);
+    }
+  }
+
+  /**
+   * Called when a local notification need to be restored.
+   *
+   * @param request Set of notification options.
+   * @param toast   Wrapper around the local notification.
+   */
+  abstract public void onRestore(Request request, Notification toast);
+
+  /**
+   * Build notification specified by options.
+   *
+   * @param builder Notification builder.
+   */
+  abstract public Notification buildNotification(Builder builder);
 
 }

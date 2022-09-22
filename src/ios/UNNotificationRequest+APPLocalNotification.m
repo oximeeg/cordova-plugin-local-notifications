@@ -19,9 +19,9 @@
  * limitations under the License.
  */
 
+#import "APPNotificationContent.h"
 #import "APPNotificationOptions.h"
 #import "UNNotificationRequest+APPLocalNotification.h"
-#import "APPNotificationContent.h"
 #import <objc/runtime.h>
 
 @import UserNotifications;
@@ -33,35 +33,32 @@ static char optionsKey;
 /**
  * Get associated option object
  */
-- (APPNotificationOptions*) getOptions
-{
-    return objc_getAssociatedObject(self, &optionsKey);
+- (APPNotificationOptions *)getOptions {
+  return objc_getAssociatedObject(self, &optionsKey);
 }
 
 /**
  * Set associated option object
  */
-- (void) setOptions:(APPNotificationOptions*)options
-{
-    objc_setAssociatedObject(self, &optionsKey,
-                             options, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+- (void)setOptions:(APPNotificationOptions *)options {
+  objc_setAssociatedObject(self, &optionsKey, options,
+                           OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 /**
  * The options provided by the plug-in.
  */
-- (APPNotificationOptions*) options
-{
-    APPNotificationOptions* options = [self getOptions];
+- (APPNotificationOptions *)options {
+  APPNotificationOptions *options = [self getOptions];
 
-    if (!options) {
-        options = [[APPNotificationOptions alloc]
-                   initWithDict:[self.content userInfo]];
+  if (!options) {
+    options =
+        [[APPNotificationOptions alloc] initWithDict:[self.content userInfo]];
 
-        [self setOptions:options];
-    }
+    [self setOptions:options];
+  }
 
-    return options;
+  return options;
 }
 
 /**
@@ -69,34 +66,30 @@ static char optionsKey;
  *
  * @return [ BOOL ]
  */
-- (BOOL) wasUpdated
-{
-    return [self.content userInfo][@"updatedAt"] != NULL;
+- (BOOL)wasUpdated {
+  return [self.content userInfo][@"updatedAt"] != NULL;
 }
 
 /**
  * Encode the user info dict to JSON.
  */
-- (NSString*) encodeToJSON
-{
-    NSString* json;
-    NSData* data;
-    NSMutableDictionary* obj = [self.content.userInfo mutableCopy];
+- (NSString *)encodeToJSON {
+  NSString *json;
+  NSData *data;
+  NSMutableDictionary *obj = [self.content.userInfo mutableCopy];
 
-    [obj removeObjectForKey:@"updatedAt"];
+  [obj removeObjectForKey:@"updatedAt"];
 
-    if (obj == NULL || obj.count == 0)
-        return json;
+  if (obj == NULL || obj.count == 0)
+    return json;
 
-    data = [NSJSONSerialization dataWithJSONObject:obj
-                                           options:NSJSONWritingPrettyPrinted
-                                             error:NULL];
+  data = [NSJSONSerialization dataWithJSONObject:obj
+                                         options:NSJSONWritingPrettyPrinted
+                                           error:NULL];
 
-    json = [[NSString alloc] initWithData:data
-                                 encoding:NSUTF8StringEncoding];
+  json = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 
-    return [json stringByReplacingOccurrencesOfString:@"\n"
-                                           withString:@""];
+  return [json stringByReplacingOccurrencesOfString:@"\n" withString:@""];
 }
 
 @end

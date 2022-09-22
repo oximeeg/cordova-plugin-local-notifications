@@ -36,14 +36,14 @@
  *
  * @return [ UNNotificationCategory* ]
  */
-+ (UNNotificationCategory*) parse:(NSArray*)list withId:(NSString*)groupId
-{
-    NSArray* actions = [self parseActions:list];
++ (UNNotificationCategory *)parse:(NSArray *)list withId:(NSString *)groupId {
+  NSArray *actions = [self parseActions:list];
 
-    return [UNNotificationCategory categoryWithIdentifier:groupId
-                                                  actions:actions
-                                        intentIdentifiers:@[]
-                                                  options:UNNotificationCategoryOptionCustomDismissAction];
+  return [UNNotificationCategory
+      categoryWithIdentifier:groupId
+                     actions:actions
+           intentIdentifiers:@[]
+                     options:UNNotificationCategoryOptionCustomDismissAction];
 }
 
 #pragma mark -
@@ -54,58 +54,56 @@
  *
  * @return [ NSArray* ]
  */
-+ (NSArray<UNNotificationAction *> *) parseActions:(NSArray*)items
-{
-    NSMutableArray* actions = [[NSMutableArray alloc] init];
-    
-    for (NSDictionary* item in items) {
-        NSString* id    = item[@"id"];
-        NSString* title = item[@"title"];
-        NSString* type  = item[@"type"];
-        
-        UNNotificationActionOptions options = UNNotificationActionOptionNone;
-        UNNotificationAction* action;
-        
-        if ([item[@"launch"] boolValue]) {
-            options = UNNotificationActionOptionForeground;
-        }
-        
-        if ([item[@"ui"] isEqualToString:@"decline"]) {
-            options = options | UNNotificationActionOptionDestructive;
-        }
-        
-        if ([item[@"needsAuth"] boolValue]) {
-            options = options | UNNotificationActionOptionAuthenticationRequired;
-        }
-        
-        if ([type isEqualToString:@"input"]) {
-            NSString* submitTitle = item[@"submitTitle"];
-            NSString* placeholder = item[@"emptyText"];
-            
-            if (!submitTitle.length) {
-                submitTitle = @"Submit";
-            }
-            
-            action = [UNTextInputNotificationAction actionWithIdentifier:id
-                                                                   title:title
-                                                                 options:options
-                                                    textInputButtonTitle:submitTitle
-                                                    textInputPlaceholder:placeholder];
-        } else
-            if (!type.length || [type isEqualToString:@"button"]) {
-                action = [UNNotificationAction actionWithIdentifier:id
-                                                              title:title
-                                                            options:options];
-            } else {
-                NSLog(@"Unknown action type: %@", type);
-            }
-        
-        if (action) {
-            [actions addObject:action];
-        }
++ (NSArray<UNNotificationAction *> *)parseActions:(NSArray *)items {
+  NSMutableArray *actions = [[NSMutableArray alloc] init];
+
+  for (NSDictionary *item in items) {
+    NSString *id = item[@"id"];
+    NSString *title = item[@"title"];
+    NSString *type = item[@"type"];
+
+    UNNotificationActionOptions options = UNNotificationActionOptionNone;
+    UNNotificationAction *action;
+
+    if ([item[@"launch"] boolValue]) {
+      options = UNNotificationActionOptionForeground;
     }
-    
-    return actions;
+
+    if ([item[@"ui"] isEqualToString:@"decline"]) {
+      options = options | UNNotificationActionOptionDestructive;
+    }
+
+    if ([item[@"needsAuth"] boolValue]) {
+      options = options | UNNotificationActionOptionAuthenticationRequired;
+    }
+
+    if ([type isEqualToString:@"input"]) {
+      NSString *submitTitle = item[@"submitTitle"];
+      NSString *placeholder = item[@"emptyText"];
+
+      if (!submitTitle.length) {
+        submitTitle = @"Submit";
+      }
+
+      action = [UNTextInputNotificationAction actionWithIdentifier:id
+                                                             title:title
+                                                           options:options
+                                              textInputButtonTitle:submitTitle
+                                              textInputPlaceholder:placeholder];
+    } else if (!type.length || [type isEqualToString:@"button"]) {
+      action = [UNNotificationAction actionWithIdentifier:id
+                                                    title:title
+                                                  options:options];
+    } else {
+      NSLog(@"Unknown action type: %@", type);
+    }
+
+    if (action) {
+      [actions addObject:action];
+    }
+  }
+
+  return actions;
 }
 
 @end

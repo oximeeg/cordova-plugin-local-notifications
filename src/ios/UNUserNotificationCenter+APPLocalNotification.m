@@ -19,12 +19,12 @@
  * limitations under the License.
  */
 
-#import "UNUserNotificationCenter+APPLocalNotification.h"
 #import "UNNotificationRequest+APPLocalNotification.h"
+#import "UNUserNotificationCenter+APPLocalNotification.h"
 
 @import UserNotifications;
 
-NSString * const kAPPGeneralCategory = @"GENERAL";
+NSString *const kAPPGeneralCategory = @"GENERAL";
 
 @implementation UNUserNotificationCenter (APPLocalNotification)
 
@@ -36,17 +36,16 @@ NSString * const kAPPGeneralCategory = @"GENERAL";
  *
  * @return [ Void ]
  */
-- (void) registerGeneralNotificationCategory
-{
-    UNNotificationCategory* category;
+- (void)registerGeneralNotificationCategory {
+  UNNotificationCategory *category;
 
-    category = [UNNotificationCategory
-                categoryWithIdentifier:kAPPGeneralCategory
-                actions:@[]
-                intentIdentifiers:@[]
-                options:UNNotificationCategoryOptionCustomDismissAction];
+  category = [UNNotificationCategory
+      categoryWithIdentifier:kAPPGeneralCategory
+                     actions:@[]
+           intentIdentifiers:@[]
+                     options:UNNotificationCategoryOptionCustomDismissAction];
 
-    [self setNotificationCategories:[NSSet setWithObject:category]];
+  [self setNotificationCategories:[NSSet setWithObject:category]];
 }
 
 /**
@@ -56,25 +55,24 @@ NSString * const kAPPGeneralCategory = @"GENERAL";
  *
  * @return [ Void ]
  */
-- (void) addActionGroup:(UNNotificationCategory*)category
-{
-    if (!category)
-        return;
+- (void)addActionGroup:(UNNotificationCategory *)category {
+  if (!category)
+    return;
 
-    [self getNotificationCategoriesWithCompletionHandler:^(NSSet<UNNotificationCategory *> *set) {
-        NSMutableSet* categories = [NSMutableSet setWithSet:set];
+  [self getNotificationCategoriesWithCompletionHandler:^(
+            NSSet<UNNotificationCategory *> *set) {
+    NSMutableSet *categories = [NSMutableSet setWithSet:set];
 
-        for (UNNotificationCategory* item in categories)
-        {
-            if ([category.identifier isEqualToString:item.identifier]) {
-                [categories removeObject:item];
-                break;
-            }
-        }
+    for (UNNotificationCategory *item in categories) {
+      if ([category.identifier isEqualToString:item.identifier]) {
+        [categories removeObject:item];
+        break;
+      }
+    }
 
-        [categories addObject:category];
-        [self setNotificationCategories:categories];
-    }];
+    [categories addObject:category];
+    [self setNotificationCategories:categories];
+  }];
 }
 
 /**
@@ -84,21 +82,20 @@ NSString * const kAPPGeneralCategory = @"GENERAL";
  *
  * @return [ Void ]
  */
-- (void) removeActionGroup:(NSString*)identifier
-{
-    [self getNotificationCategoriesWithCompletionHandler:^(NSSet<UNNotificationCategory *> *set) {
-        NSMutableSet* categories = [NSMutableSet setWithSet:set];
-        
-        for (UNNotificationCategory* item in categories)
-        {
-            if ([item.identifier isEqualToString:identifier]) {
-                [categories removeObject:item];
-                break;
-            }
-        }
+- (void)removeActionGroup:(NSString *)identifier {
+  [self getNotificationCategoriesWithCompletionHandler:^(
+            NSSet<UNNotificationCategory *> *set) {
+    NSMutableSet *categories = [NSMutableSet setWithSet:set];
 
-        [self setNotificationCategories:categories];
-    }];
+    for (UNNotificationCategory *item in categories) {
+      if ([item.identifier isEqualToString:identifier]) {
+        [categories removeObject:item];
+        break;
+      }
+    }
+
+    [self setNotificationCategories:categories];
+  }];
 }
 
 /**
@@ -108,25 +105,24 @@ NSString * const kAPPGeneralCategory = @"GENERAL";
  *
  * @return [ BOOL ]
  */
-- (BOOL) hasActionGroup:(NSString*)identifier
-{
-    dispatch_semaphore_t sema = dispatch_semaphore_create(0);
-    __block BOOL found        = NO;
+- (BOOL)hasActionGroup:(NSString *)identifier {
+  dispatch_semaphore_t sema = dispatch_semaphore_create(0);
+  __block BOOL found = NO;
 
-    [self getNotificationCategoriesWithCompletionHandler:^(NSSet<UNNotificationCategory *> *items) {
-        for (UNNotificationCategory* item in items)
-        {
-            if ([item.identifier isEqualToString:identifier]) {
-                found = YES;
-                dispatch_semaphore_signal(sema);
-                break;
-            }
-        }
-    }];
-    
-    dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
-    
-    return found;
+  [self getNotificationCategoriesWithCompletionHandler:^(
+            NSSet<UNNotificationCategory *> *items) {
+    for (UNNotificationCategory *item in items) {
+      if ([item.identifier isEqualToString:identifier]) {
+        found = YES;
+        dispatch_semaphore_signal(sema);
+        break;
+      }
+    }
+  }];
+
+  dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
+
+  return found;
 }
 
 #pragma mark -
@@ -137,14 +133,13 @@ NSString * const kAPPGeneralCategory = @"GENERAL";
  *
  * @return [ NSArray<UNNotificationRequest*>* ]
  */
-- (NSArray*) getNotifications
-{
-    NSMutableArray* notifications = [[NSMutableArray alloc] init];
+- (NSArray *)getNotifications {
+  NSMutableArray *notifications = [[NSMutableArray alloc] init];
 
-    [notifications addObjectsFromArray:[self getPendingNotifications]];
-    [notifications addObjectsFromArray:[self getDeliveredNotifications]];
+  [notifications addObjectsFromArray:[self getPendingNotifications]];
+  [notifications addObjectsFromArray:[self getDeliveredNotifications]];
 
-    return notifications;
+  return notifications;
 }
 
 /**
@@ -152,22 +147,21 @@ NSString * const kAPPGeneralCategory = @"GENERAL";
  *
  * @return [ NSArray<UNNotificationRequest*>* ]
  */
-- (NSArray*) getDeliveredNotifications
-{
-    NSMutableArray* notifications = [[NSMutableArray alloc] init];
-    dispatch_semaphore_t sema = dispatch_semaphore_create(0);
+- (NSArray *)getDeliveredNotifications {
+  NSMutableArray *notifications = [[NSMutableArray alloc] init];
+  dispatch_semaphore_t sema = dispatch_semaphore_create(0);
 
-    [self getDeliveredNotificationsWithCompletionHandler:^(NSArray<UNNotification *> *delivered) {
-        for (UNNotification* notification in delivered)
-        {
-            [notifications addObject:notification.request];
-        }
-        dispatch_semaphore_signal(sema);
-    }];
+  [self getDeliveredNotificationsWithCompletionHandler:^(
+            NSArray<UNNotification *> *delivered) {
+    for (UNNotification *notification in delivered) {
+      [notifications addObject:notification.request];
+    }
+    dispatch_semaphore_signal(sema);
+  }];
 
-    dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
+  dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
 
-    return notifications;
+  return notifications;
 }
 
 /**
@@ -175,19 +169,19 @@ NSString * const kAPPGeneralCategory = @"GENERAL";
  *
  * @return [ NSArray<UNNotificationRequest*>* ]
  */
-- (NSArray*) getPendingNotifications
-{
-    NSMutableArray* notifications = [[NSMutableArray alloc] init];
-    dispatch_semaphore_t sema = dispatch_semaphore_create(0);
+- (NSArray *)getPendingNotifications {
+  NSMutableArray *notifications = [[NSMutableArray alloc] init];
+  dispatch_semaphore_t sema = dispatch_semaphore_create(0);
 
-    [self getPendingNotificationRequestsWithCompletionHandler:^(NSArray<UNNotificationRequest *> *requests) {
-        [notifications addObjectsFromArray:requests];
-        dispatch_semaphore_signal(sema);
-    }];
+  [self getPendingNotificationRequestsWithCompletionHandler:^(
+            NSArray<UNNotificationRequest *> *requests) {
+    [notifications addObjectsFromArray:requests];
+    dispatch_semaphore_signal(sema);
+  }];
 
-    dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
+  dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
 
-    return notifications;
+  return notifications;
 }
 
 /**
@@ -197,18 +191,17 @@ NSString * const kAPPGeneralCategory = @"GENERAL";
  *
  * @return [ NSArray<UNNotificationRequest>* ]
  */
-- (NSArray*) getNotificationsByType:(APPNotificationType)type
-{
-    switch (type) {
-        case NotifcationTypeScheduled:
-            return [self getPendingNotifications];
+- (NSArray *)getNotificationsByType:(APPNotificationType)type {
+  switch (type) {
+  case NotifcationTypeScheduled:
+    return [self getPendingNotifications];
 
-        case NotifcationTypeTriggered:
-            return [self getDeliveredNotifications];
+  case NotifcationTypeTriggered:
+    return [self getDeliveredNotifications];
 
-        default:
-            return [self getNotifications];
-    }
+  default:
+    return [self getNotifications];
+  }
 }
 
 /**
@@ -216,17 +209,15 @@ NSString * const kAPPGeneralCategory = @"GENERAL";
  *
  * @return [ NSArray<int>* ]
  */
-- (NSArray*) getNotificationIds
-{
-    NSArray* notifications = [self getNotifications];
-    NSMutableArray* ids    = [[NSMutableArray alloc] init];
+- (NSArray *)getNotificationIds {
+  NSArray *notifications = [self getNotifications];
+  NSMutableArray *ids = [[NSMutableArray alloc] init];
 
-    for (UNNotificationRequest* notification in notifications)
-    {
-        [ids addObject:notification.options.id];
-    }
+  for (UNNotificationRequest *notification in notifications) {
+    [ids addObject:notification.options.id];
+  }
 
-    return ids;
+  return ids;
 }
 
 /**
@@ -236,17 +227,15 @@ NSString * const kAPPGeneralCategory = @"GENERAL";
  *
  * @return [ NSArray<int>* ]
  */
-- (NSArray*) getNotificationIdsByType:(APPNotificationType)type
-{
-    NSArray* notifications = [self getNotificationsByType:type];
-    NSMutableArray* ids    = [[NSMutableArray alloc] init];
+- (NSArray *)getNotificationIdsByType:(APPNotificationType)type {
+  NSArray *notifications = [self getNotificationsByType:type];
+  NSMutableArray *ids = [[NSMutableArray alloc] init];
 
-    for (UNNotificationRequest* notification in notifications)
-    {
-        [ids addObject:notification.options.id];
-    }
+  for (UNNotificationRequest *notification in notifications) {
+    [ids addObject:notification.options.id];
+  }
 
-    return ids;
+  return ids;
 }
 
 /**
@@ -256,20 +245,18 @@ NSString * const kAPPGeneralCategory = @"GENERAL";
  *
  * @return [ UNNotificationRequest* ]
  */
-- (UNNotificationRequest*) getNotificationWithId:(NSNumber*)id
-{
-    NSArray* notifications = [self getNotifications];
+- (UNNotificationRequest *)getNotificationWithId:(NSNumber *)id {
+  NSArray *notifications = [self getNotifications];
 
-    for (UNNotificationRequest* notification in notifications)
-    {
-        NSString* fid = [NSString stringWithFormat:@"%@", notification.options.id];
-        
-        if ([fid isEqualToString:[id stringValue]]) {
-            return notification;
-        }
+  for (UNNotificationRequest *notification in notifications) {
+    NSString *fid = [NSString stringWithFormat:@"%@", notification.options.id];
+
+    if ([fid isEqualToString:[id stringValue]]) {
+      return notification;
     }
-    
-    return NULL;
+  }
+
+  return NULL;
 }
 
 /**
@@ -279,19 +266,18 @@ NSString * const kAPPGeneralCategory = @"GENERAL";
  *
  * @return [ APPNotificationType ]
  */
-- (APPNotificationType) getTypeOfNotificationWithId:(NSNumber*)id
-{
-    NSArray* ids = [self getNotificationIdsByType:NotifcationTypeTriggered];
-    
-    if ([ids containsObject:id])
-        return NotifcationTypeTriggered;
+- (APPNotificationType)getTypeOfNotificationWithId:(NSNumber *)id {
+  NSArray *ids = [self getNotificationIdsByType:NotifcationTypeTriggered];
 
-    ids = [self getNotificationIdsByType:NotifcationTypeScheduled];
-    
-    if ([ids containsObject:id])
-        return NotifcationTypeScheduled;
-    
-    return NotifcationTypeUnknown;
+  if ([ids containsObject:id])
+    return NotifcationTypeTriggered;
+
+  ids = [self getNotificationIdsByType:NotifcationTypeScheduled];
+
+  if ([ids containsObject:id])
+    return NotifcationTypeScheduled;
+
+  return NotifcationTypeUnknown;
 }
 
 /**
@@ -299,9 +285,8 @@ NSString * const kAPPGeneralCategory = @"GENERAL";
  *
  * @return [ NSArray<APPNotificationOptions*>* ]
  */
-- (NSArray*) getNotificationOptions
-{
-    return [self getNotificationOptionsByType:NotifcationTypeAll];
+- (NSArray *)getNotificationOptions {
+  return [self getNotificationOptionsByType:NotifcationTypeAll];
 }
 
 /**
@@ -311,17 +296,15 @@ NSString * const kAPPGeneralCategory = @"GENERAL";
  *
  * @return [ NSArray<APPNotificationOptions*>* ]
  */
-- (NSArray*) getNotificationOptionsByType:(APPNotificationType)type
-{
-    NSArray* notifications  = [self getNotificationsByType:type];
-    NSMutableArray* options = [[NSMutableArray alloc] init];
+- (NSArray *)getNotificationOptionsByType:(APPNotificationType)type {
+  NSArray *notifications = [self getNotificationsByType:type];
+  NSMutableArray *options = [[NSMutableArray alloc] init];
 
-    for (UNNotificationRequest* notification in notifications)
-    {
-        [options addObject:notification.options.userInfo];
-    }
+  for (UNNotificationRequest *notification in notifications) {
+    [options addObject:notification.options.userInfo];
+  }
 
-    return options;
+  return options;
 }
 
 /**
@@ -331,19 +314,17 @@ NSString * const kAPPGeneralCategory = @"GENERAL";
  *
  * @return [ NSArray<APPNotificationOptions*>* ]
  */
-- (NSArray*) getNotificationOptionsById:(NSArray*)ids
-{
-    NSArray* notifications  = [self getNotifications];
-    NSMutableArray* options = [[NSMutableArray alloc] init];
-    
-    for (UNNotificationRequest* notification in notifications)
-    {
-        if ([ids containsObject:notification.options.id]) {
-            [options addObject:notification.options.userInfo];
-        }
+- (NSArray *)getNotificationOptionsById:(NSArray *)ids {
+  NSArray *notifications = [self getNotifications];
+  NSMutableArray *options = [[NSMutableArray alloc] init];
+
+  for (UNNotificationRequest *notification in notifications) {
+    if ([ids containsObject:notification.options.id]) {
+      [options addObject:notification.options.userInfo];
     }
-    
-    return options;
+  }
+
+  return options;
 }
 
 /*
@@ -351,9 +332,8 @@ NSString * const kAPPGeneralCategory = @"GENERAL";
  *
  * @return [ Void ]
  */
-- (void) clearNotifications
-{
-    [self removeAllDeliveredNotifications];
+- (void)clearNotifications {
+  [self removeAllDeliveredNotifications];
 }
 
 /*
@@ -363,9 +343,8 @@ NSString * const kAPPGeneralCategory = @"GENERAL";
  *
  * @return [ Void ]
  */
-- (void) clearNotification:(UNNotificationRequest*)toast
-{
-    [self removeDeliveredNotificationsWithIdentifiers:@[toast.identifier]];
+- (void)clearNotification:(UNNotificationRequest *)toast {
+  [self removeDeliveredNotificationsWithIdentifiers:@[ toast.identifier ]];
 }
 
 /*
@@ -373,10 +352,9 @@ NSString * const kAPPGeneralCategory = @"GENERAL";
  *
  * @return [ Void ]
  */
-- (void) cancelNotifications
-{
-    [self removeAllPendingNotificationRequests];
-    [self removeAllDeliveredNotifications];
+- (void)cancelNotifications {
+  [self removeAllPendingNotificationRequests];
+  [self removeAllDeliveredNotifications];
 }
 
 /*
@@ -386,12 +364,11 @@ NSString * const kAPPGeneralCategory = @"GENERAL";
  *
  * @return [ Void ]
  */
-- (void) cancelNotification:(UNNotificationRequest*)toast
-{
-    NSArray* ids = @[toast.identifier];
-                    
-    [self removeDeliveredNotificationsWithIdentifiers:ids];
-    [self removePendingNotificationRequestsWithIdentifiers:ids];
+- (void)cancelNotification:(UNNotificationRequest *)toast {
+  NSArray *ids = @[ toast.identifier ];
+
+  [self removeDeliveredNotificationsWithIdentifiers:ids];
+  [self removePendingNotificationRequestsWithIdentifiers:ids];
 }
 
 @end

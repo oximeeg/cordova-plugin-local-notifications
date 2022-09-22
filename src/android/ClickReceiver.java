@@ -41,68 +41,68 @@ import static de.appplant.cordova.plugin.notification.Request.EXTRA_LAST;
  */
 public class ClickReceiver extends AbstractClickReceiver {
 
-    /**
-     * Called when local notification was clicked by the user.
-     *
-     * @param notification Wrapper around the local notification.
-     * @param bundle       The bundled extras.
-     */
-    @Override
-    public void onClick(Notification notification, Bundle bundle) {
-        String action   = getAction();
-        JSONObject data = new JSONObject();
+  /**
+   * Called when local notification was clicked by the user.
+   *
+   * @param notification Wrapper around the local notification.
+   * @param bundle       The bundled extras.
+   */
+  @Override
+  public void onClick(Notification notification, Bundle bundle) {
+    String action = getAction();
+    JSONObject data = new JSONObject();
 
-        setTextInput(action, data);
-        launchAppIf();
+    setTextInput(action, data);
+    launchAppIf();
 
-        fireEvent(action, notification, data);
+    fireEvent(action, notification, data);
 
-        if (notification.getOptions().isSticky())
-            return;
+    if (notification.getOptions().isSticky())
+      return;
 
-        if (isLast()) {
-            notification.cancel();
-        } else {
-            notification.clear();
-        }
+    if (isLast()) {
+      notification.cancel();
+    } else {
+      notification.clear();
     }
+  }
 
-    /**
-     * Set the text if any remote input is given.
-     *
-     * @param action The action where to look for.
-     * @param data   The object to extend.
-     */
-    private void setTextInput(String action, JSONObject data) {
-        Bundle input = RemoteInput.getResultsFromIntent(getIntent());
+  /**
+   * Set the text if any remote input is given.
+   *
+   * @param action The action where to look for.
+   * @param data   The object to extend.
+   */
+  private void setTextInput(String action, JSONObject data) {
+    Bundle input = RemoteInput.getResultsFromIntent(getIntent());
 
-        if (input == null)
-            return;
+    if (input == null)
+      return;
 
-        try {
-            data.put("text", input.getCharSequence(action));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    try {
+      data.put("text", input.getCharSequence(action));
+    } catch (JSONException e) {
+      e.printStackTrace();
     }
+  }
 
-    /**
-     * Launch app if requested by user.
-     */
-    private void launchAppIf() {
-        boolean doLaunch = getIntent().getBooleanExtra(EXTRA_LAUNCH, true);
+  /**
+   * Launch app if requested by user.
+   */
+  private void launchAppIf() {
+    boolean doLaunch = getIntent().getBooleanExtra(EXTRA_LAUNCH, true);
 
-        if (!doLaunch)
-            return;
+    if (!doLaunch)
+      return;
 
-        launchApp();
-    }
+    launchApp();
+  }
 
-    /**
-     * If the notification was the last scheduled one by request.
-     */
-    private boolean isLast() {
-        return getIntent().getBooleanExtra(EXTRA_LAST, false);
-    }
+  /**
+   * If the notification was the last scheduled one by request.
+   */
+  private boolean isLast() {
+    return getIntent().getBooleanExtra(EXTRA_LAST, false);
+  }
 
 }

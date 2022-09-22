@@ -25,8 +25,8 @@
 
 @interface UNNotificationRequest (APPLocalNotification)
 
-- (APPNotificationOptions*) options;
-- (BOOL) wasUpdated;
-- (NSString*) encodeToJSON;
+- (APPNotificationOptions *)options;
+- (BOOL)wasUpdated;
+- (NSString *)encodeToJSON;
 
 @end

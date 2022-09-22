@@ -23,38 +23,38 @@
 
 @interface UNUserNotificationCenter (APPLocalNotification)
 
-extern NSString * const kAPPGeneralCategory;
+extern NSString *const kAPPGeneralCategory;
 
 typedef NS_ENUM(NSUInteger, APPNotificationType) {
-    NotifcationTypeAll = 0,
-    NotifcationTypeScheduled = 1,
-    NotifcationTypeTriggered = 2,
-    NotifcationTypeUnknown = 3
+  NotifcationTypeAll = 0,
+  NotifcationTypeScheduled = 1,
+  NotifcationTypeTriggered = 2,
+  NotifcationTypeUnknown = 3
 };
 
 #define APPNotificationType_DEFINED
 
-@property (readonly, getter=getNotifications) NSArray* localNotifications;
-@property (readonly, getter=getNotificationIds) NSArray* localNotificationIds;
+@property(readonly, getter=getNotifications) NSArray *localNotifications;
+@property(readonly, getter=getNotificationIds) NSArray *localNotificationIds;
 
-- (void) registerGeneralNotificationCategory;
-- (void) addActionGroup:(UNNotificationCategory*)category;
-- (void) removeActionGroup:(NSString*)identifier;
-- (BOOL) hasActionGroup:(NSString*)identifier;
+- (void)registerGeneralNotificationCategory;
+- (void)addActionGroup:(UNNotificationCategory *)category;
+- (void)removeActionGroup:(NSString *)identifier;
+- (BOOL)hasActionGroup:(NSString *)identifier;
 
-- (NSArray*) getNotificationIdsByType:(APPNotificationType)type;
+- (NSArray *)getNotificationIdsByType:(APPNotificationType)type;
 
-- (UNNotificationRequest*) getNotificationWithId:(NSNumber*)id;
-- (APPNotificationType) getTypeOfNotificationWithId:(NSNumber*)id;
+- (UNNotificationRequest *)getNotificationWithId:(NSNumber *)id;
+- (APPNotificationType)getTypeOfNotificationWithId:(NSNumber *)id;
 
-- (NSArray*) getNotificationOptions;
-- (NSArray*) getNotificationOptionsById:(NSArray*)ids;
-- (NSArray*) getNotificationOptionsByType:(APPNotificationType)type;
+- (NSArray *)getNotificationOptions;
+- (NSArray *)getNotificationOptionsById:(NSArray *)ids;
+- (NSArray *)getNotificationOptionsByType:(APPNotificationType)type;
 
-- (void) clearNotification:(UNNotificationRequest*)notification;
-- (void) clearNotifications;
+- (void)clearNotification:(UNNotificationRequest *)notification;
+- (void)clearNotifications;
 
-- (void) cancelNotification:(UNNotificationRequest*)notification;
-- (void) cancelNotifications;
+- (void)cancelNotification:(UNNotificationRequest *)notification;
+- (void)cancelNotifications;
 
 @end

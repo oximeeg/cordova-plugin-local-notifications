@@ -25,8 +25,8 @@
 
 @interface APPNotificationContent : UNMutableNotificationContent
 
-- (id) initWithOptions:(NSDictionary*)dict;
-- (APPNotificationOptions*) options;
-- (UNNotificationRequest*) request;
+- (id)initWithOptions:(NSDictionary *)dict;
+- (APPNotificationOptions *)options;
+- (UNNotificationRequest *)request;
 
 @end

@@ -40,80 +40,80 @@ import static de.appplant.cordova.plugin.notification.action.Action.EXTRA_ID;
  */
 abstract public class AbstractClickReceiver extends IntentService {
 
-    // Holds a reference to the intent to handle.
-    private Intent intent;
+  // Holds a reference to the intent to handle.
+  private Intent intent;
 
-    public AbstractClickReceiver() {
-        super("LocalNotificationClickReceiver");
-    }
+  public AbstractClickReceiver() {
+    super("LocalNotificationClickReceiver");
+  }
 
-    /**
-     * Called when local notification was clicked to launch the main intent.
-     */
-    @Override
-    protected void onHandleIntent(Intent intent) {
-        this.intent        = intent;
+  /**
+   * Called when local notification was clicked to launch the main intent.
+   */
+  @Override
+  protected void onHandleIntent(Intent intent) {
+    this.intent = intent;
 
-        if (intent == null)
-            return;
+    if (intent == null)
+      return;
 
-        Bundle bundle      = intent.getExtras();
-        Context context    = getApplicationContext();
+    Bundle bundle = intent.getExtras();
+    Context context = getApplicationContext();
 
-        if (bundle == null)
-            return;
+    if (bundle == null)
+      return;
 
-        int toastId        = bundle.getInt(Notification.EXTRA_ID);
-        Notification toast = Manager.getInstance(context).get(toastId);
+    int toastId = bundle.getInt(Notification.EXTRA_ID);
+    Notification toast = Manager.getInstance(context).get(toastId);
 
-        if (toast == null)
-            return;
+    if (toast == null)
+      return;
 
-        onClick(toast, bundle);
-        this.intent = null;
-    }
+    onClick(toast, bundle);
+    this.intent = null;
+  }
 
-    /**
-     * Called when local notification was clicked by the user.
-     *
-     * @param notification Wrapper around the local notification.
-     * @param bundle The bundled extras.
-     */
-    abstract public void onClick (Notification notification, Bundle bundle);
+  /**
+   * Called when local notification was clicked by the user.
+   *
+   * @param notification Wrapper around the local notification.
+   * @param bundle       The bundled extras.
+   */
+  abstract public void onClick(Notification notification, Bundle bundle);
 
-    /**
-     * The invoked action.
-     */
-    protected String getAction() {
-        return getIntent().getExtras().getString(EXTRA_ID, CLICK_ACTION_ID);
-    }
+  /**
+   * The invoked action.
+   */
+  protected String getAction() {
+    return getIntent().getExtras().getString(EXTRA_ID, CLICK_ACTION_ID);
+  }
 
-    /**
-     * Getter for the received intent.
-     */
-    protected Intent getIntent() {
-        return intent;
-    }
+  /**
+   * Getter for the received intent.
+   */
+  protected Intent getIntent() {
+    return intent;
+  }
 
-    /**
-     * Launch main intent from package.
-     */
-    protected void launchApp() {
-        Context context = getApplicationContext();
-        String pkgName  = context.getPackageName();
+  /**
+   * Launch main intent from package.
+   */
+  protected void launchApp() {
+    Context context = getApplicationContext();
+    String pkgName = context.getPackageName();
 
-        Intent intent = context
-                .getPackageManager()
-                .getLaunchIntentForPackage(pkgName);
+    Intent intent = context
+        .getPackageManager()
+        .getLaunchIntentForPackage(pkgName);
 
-        if (intent == null)
-            return;
+    if (intent == null)
+      return;
 
-        intent.addFlags(
-              FLAG_ACTIVITY_REORDER_TO_FRONT
+    intent.addFlags(
+        FLAG_ACTIVITY_REORDER_TO_FRONT
             | FLAG_ACTIVITY_SINGLE_TOP);
 
-        context.startActivity(intent);
-    }
+    context.startActivity(intent);
+  }
 
 }

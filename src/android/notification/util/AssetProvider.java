@@ -22,5 +22,5 @@ package de.appplant.cordova.plugin.notification.util;
 import android.support.v4.content.FileProvider;
 
 public class AssetProvider extends FileProvider {
-    // Nothing to do here
+  // Nothing to do here
 }

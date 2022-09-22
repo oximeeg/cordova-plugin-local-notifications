@@ -25,28 +25,28 @@
 
 @interface APPLocalNotification : CDVPlugin <UNUserNotificationCenterDelegate>
 
-- (void) launch:(CDVInvokedUrlCommand*)command;
-- (void) ready:(CDVInvokedUrlCommand*)command;
+- (void)launch:(CDVInvokedUrlCommand *)command;
+- (void)ready:(CDVInvokedUrlCommand *)command;
 
-- (void) actions:(CDVInvokedUrlCommand*)command;
+- (void)actions:(CDVInvokedUrlCommand *)command;
 
-- (void) check:(CDVInvokedUrlCommand*)command;
-- (void) request:(CDVInvokedUrlCommand*)command;
+- (void)check:(CDVInvokedUrlCommand *)command;
+- (void)request:(CDVInvokedUrlCommand *)command;
 
-- (void) schedule:(CDVInvokedUrlCommand*)command;
-- (void) update:(CDVInvokedUrlCommand*)command;
+- (void)schedule:(CDVInvokedUrlCommand *)command;
+- (void)update:(CDVInvokedUrlCommand *)command;
 
-- (void) clear:(CDVInvokedUrlCommand*)command;
-- (void) clearAll:(CDVInvokedUrlCommand*)command;
+- (void)clear:(CDVInvokedUrlCommand *)command;
+- (void)clearAll:(CDVInvokedUrlCommand *)command;
 
-- (void) cancel:(CDVInvokedUrlCommand*)command;
-- (void) cancelAll:(CDVInvokedUrlCommand*)command;
+- (void)cancel:(CDVInvokedUrlCommand *)command;
+- (void)cancelAll:(CDVInvokedUrlCommand *)command;
 
-- (void) type:(CDVInvokedUrlCommand*)command;
+- (void)type:(CDVInvokedUrlCommand *)command;
 
-- (void) ids:(CDVInvokedUrlCommand*)command;
+- (void)ids:(CDVInvokedUrlCommand *)command;
 
-- (void) notification:(CDVInvokedUrlCommand*)command;
-- (void) notifications:(CDVInvokedUrlCommand*)command;
+- (void)notification:(CDVInvokedUrlCommand *)command;
+- (void)notifications:(CDVInvokedUrlCommand *)command;
 
 @end

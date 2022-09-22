@@ -39,14 +39,13 @@ static char optionsKey;
  *
  * @return [ UNMutableNotificationContent ]
  */
-- (id) initWithOptions:(NSDictionary*)dict
-{
-    self = [self init];
+- (id)initWithOptions:(NSDictionary *)dict {
+  self = [self init];
 
-    [self setUserInfo:dict];
-    [self __init];
+  [self setUserInfo:dict];
+  [self __init];
 
-    return self;
+  return self;
 }
 
 /**
@@ -54,17 +53,16 @@ static char optionsKey;
  *
  * @return [ Void ]
  */
-- (void) __init
-{
-    APPNotificationOptions* options = self.options;
+- (void)__init {
+  APPNotificationOptions *options = self.options;
 
-    self.title              = options.title;
-    self.subtitle           = options.subtitle;
-    self.body               = options.text;
-    self.sound              = options.sound;
-    self.badge              = options.badge;
-    self.attachments        = options.attachments;
-    self.categoryIdentifier = options.actionGroupId;
+  self.title = options.title;
+  self.subtitle = options.subtitle;
+  self.body = options.text;
+  self.sound = options.sound;
+  self.badge = options.badge;
+  self.attachments = options.attachments;
+  self.categoryIdentifier = options.actionGroupId;
 }
 
 #pragma mark -
@@ -75,18 +73,16 @@ static char optionsKey;
  *
  * @return [ APPNotificationOptions* ] options
  */
-- (APPNotificationOptions*) options
-{
-    APPNotificationOptions* options = [self getOptions];
+- (APPNotificationOptions *)options {
+  APPNotificationOptions *options = [self getOptions];
 
-    if (!options) {
-        options = [[APPNotificationOptions alloc]
-                   initWithDict:[self userInfo]];
+  if (!options) {
+    options = [[APPNotificationOptions alloc] initWithDict:[self userInfo]];
 
-        [self setOptions:options];
-    }
+    [self setOptions:options];
+  }
 
-    return options;
+  return options;
 }
 
 /**
@@ -95,13 +91,12 @@ static char optionsKey;
  *
  * @return [ UNNotificationRequest* ]
  */
-- (UNNotificationRequest*) request
-{
-    APPNotificationOptions* opts = [self getOptions];
+- (UNNotificationRequest *)request {
+  APPNotificationOptions *opts = [self getOptions];
 
-    return [UNNotificationRequest requestWithIdentifier:opts.identifier
-                                                content:self
-                                                trigger:opts.trigger];
+  return [UNNotificationRequest requestWithIdentifier:opts.identifier
+                                              content:self
+                                              trigger:opts.trigger];
 }
 
 #pragma mark -
@@ -112,9 +107,8 @@ static char optionsKey;
  *
  * @return [ APPNotificationOptions* ]
  */
-- (APPNotificationOptions*) getOptions
-{
-    return objc_getAssociatedObject(self, &optionsKey);
+- (APPNotificationOptions *)getOptions {
+  return objc_getAssociatedObject(self, &optionsKey);
 }
 
 /**
@@ -124,10 +118,9 @@ static char optionsKey;
  *
  * @return [ Void ]
  */
-- (void) setOptions:(APPNotificationOptions*)options
-{
-    objc_setAssociatedObject(self, &optionsKey,
-                             options, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+- (void)setOptions:(APPNotificationOptions *)options {
+  objc_setAssociatedObject(self, &optionsKey, options,
+                           OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 @end

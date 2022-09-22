@@ -23,6 +23,6 @@
 
 @interface APPNotificationCategory : NSObject
 
-+ (UNNotificationCategory*) parse:(NSArray*)list withId:(NSString*)groupId;
++ (UNNotificationCategory *)parse:(NSArray *)list withId:(NSString *)groupId;
 
 @end
