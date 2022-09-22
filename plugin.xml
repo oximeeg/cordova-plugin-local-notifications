@@ -24,7 +24,7 @@
 <plugin
     xmlns="http://apache.org/cordova/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    id="cordova-plugin-local-notification"
+    id="cordova-plugin-notification-local"
     version="1.0.0">
 
   <name>LocalNotification</name>
@@ -55,7 +55,7 @@
   <!-- dependencies -->
   <dependency id="cordova-plugin-device" />
   <dependency
-      id="cordova-plugin-badge"
+      id="cordova-plugin-notification-badge"
       version=">=1.0.0" />
 
   <!-- js -->
