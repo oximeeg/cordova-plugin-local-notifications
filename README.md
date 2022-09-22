@@ -470,12 +470,6 @@ document.addEventListener(
 
 It might be possible that the underlying framework like **Ionic** is not compatible with the launch process defined by cordova. With the result that the plugin fires the click event on app start before the app is able to listen for the events.
 
-Therefore its possible to fire the queued events manually by defining a global variable.
-
-```js
-window.skipLocalNotificationReady = true;
-```
-
 Once the app and Ionic is ready, you can fire the queued events manually.
 
 ```js

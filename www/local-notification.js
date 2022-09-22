@@ -1028,13 +1028,6 @@ if (!Array.from) {
   })();
 }
 
-// Called after 'deviceready' event
-channel.deviceready.subscribe(function () {
-  if (!window.skipLocalNotificationReady) {
-    exports.fireQueuedEvents();
-  }
-});
-
 // Called before 'deviceready' event
 channel.onCordovaReady.subscribe(function () {
   channel.onCordovaInfoReady.subscribe(function () {
