@@ -23,13 +23,21 @@
 
 package de.appplant.cordova.plugin.notification;
 
+import static android.os.Build.VERSION.SDK_INT;
+import static android.os.Build.VERSION_CODES.M;
+import static android.os.Build.VERSION_CODES.O;
+import static androidx.core.app.NotificationManagerCompat.IMPORTANCE_DEFAULT;
+import static de.appplant.cordova.plugin.notification.Notification.PREF_KEY_ID;
+import static de.appplant.cordova.plugin.notification.Notification.Type.TRIGGERED;
+
 import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.service.notification.StatusBarNotification;
-import android.support.v4.app.NotificationManagerCompat;
+
+import androidx.core.app.NotificationManagerCompat;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,13 +47,6 @@ import java.util.List;
 import java.util.Set;
 
 import de.appplant.cordova.plugin.badge.BadgeImpl;
-
-import static android.os.Build.VERSION.SDK_INT;
-import static android.os.Build.VERSION_CODES.M;
-import static android.os.Build.VERSION_CODES.O;
-import static android.support.v4.app.NotificationManagerCompat.IMPORTANCE_DEFAULT;
-import static de.appplant.cordova.plugin.notification.Notification.PREF_KEY_ID;
-import static de.appplant.cordova.plugin.notification.Notification.Type.TRIGGERED;
 
 /**
  * Central way to access all or single local notifications set by specific
@@ -315,8 +316,7 @@ public final class Manager {
   /**
    * List of properties from all local notifications from given type.
    *
-   * @param type
-   *             The notification life cycle type
+   * @param type The notification life cycle type
    */
   public List<JSONObject> getOptionsByType(Notification.Type type) {
     ArrayList<JSONObject> options = new ArrayList<JSONObject>();
@@ -333,7 +333,6 @@ public final class Manager {
    * Get local notification options.
    *
    * @param id Notification ID.
-   *
    * @return null if could not found.
    */
   public Options getOptions(int id) {
@@ -358,7 +357,6 @@ public final class Manager {
    * Get existent local notification.
    *
    * @param id Notification ID.
-   *
    * @return null if could not found.
    */
   public Notification get(int id) {

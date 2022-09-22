@@ -21,6 +21,15 @@
 
 package de.appplant.cordova.plugin.notification;
 
+import static android.app.AlarmManager.RTC;
+import static android.app.AlarmManager.RTC_WAKEUP;
+import static android.app.PendingIntent.FLAG_CANCEL_CURRENT;
+import static android.os.Build.VERSION.SDK_INT;
+import static android.os.Build.VERSION_CODES.M;
+import static androidx.core.app.NotificationCompat.PRIORITY_HIGH;
+import static androidx.core.app.NotificationCompat.PRIORITY_MAX;
+import static androidx.core.app.NotificationCompat.PRIORITY_MIN;
+
 import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -30,11 +39,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.service.notification.StatusBarNotification;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.util.ArraySet;
-import android.support.v4.util.Pair;
 import android.util.Log;
 import android.util.SparseArray;
+
+import androidx.collection.ArraySet;
+import androidx.core.app.NotificationCompat;
+import androidx.core.util.Pair;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,15 +54,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
-import static android.app.AlarmManager.RTC;
-import static android.app.AlarmManager.RTC_WAKEUP;
-import static android.app.PendingIntent.FLAG_CANCEL_CURRENT;
-import static android.os.Build.VERSION.SDK_INT;
-import static android.os.Build.VERSION_CODES.M;
-import static android.support.v4.app.NotificationCompat.PRIORITY_HIGH;
-import static android.support.v4.app.NotificationCompat.PRIORITY_MAX;
-import static android.support.v4.app.NotificationCompat.PRIORITY_MIN;
 
 /**
  * Wrapper class around OS notification class. Handles basic operations
@@ -247,7 +248,6 @@ public final class Notification {
    *
    * @param intent The intent to broadcast.
    * @param cls    The broadcast class.
-   *
    * @return false if the receiver could not be invoked.
    */
   private boolean trigger(Intent intent, Class<?> cls) {
@@ -287,7 +287,7 @@ public final class Notification {
 
   /**
    * Cancel the scheduled future local notification.
-   *
+   * <p>
    * Create an intent that looks similar, to the one that was registered
    * using schedule. Making sure the notification id in the action is the
    * same. Now we can search for such an intent using the 'getService'
@@ -452,7 +452,6 @@ public final class Notification {
    * Find the cached builder instance.
    *
    * @param key The key under where to look for the builder.
-   *
    * @return null if no builder instance could be found.
    */
   static NotificationCompat.Builder getCachedBuilder(int key) {

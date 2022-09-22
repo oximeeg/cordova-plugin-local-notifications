@@ -105,10 +105,7 @@
 
   <!-- android -->
   <platform name="android">
-    <preference
-        name="ANDROID_SUPPORT_V4_VERSION"
-        default="26.+" />
-    <framework src="com.android.support:support-v4:$ANDROID_SUPPORT_V4_VERSION" />
+    <framework src="androidx.legacy:legacy-support-v4:1.0.0" />
 
     <config-file
         target="res/xml/config.xml"
