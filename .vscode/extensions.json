@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "redhat.java",
+    "xaver.clang-format",
+    "nicolasvuillamy.vscode-groovy-lint",
+    "redhat.vscode-xml"
+  ]
+}

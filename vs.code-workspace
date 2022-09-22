@@ -1,0 +1,13 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "files.associations": {
+      "*.gradle": "groovy"
+    },
+    "xml.format.splitAttributes": true
+  }
+}
