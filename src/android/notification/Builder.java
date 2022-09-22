@@ -21,6 +21,7 @@
 
 package de.appplant.cordova.plugin.notification;
 
+import static android.app.PendingIntent.FLAG_IMMUTABLE;
 import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
 import static de.appplant.cordova.plugin.notification.Notification.EXTRA_UPDATE;
 
@@ -375,7 +376,7 @@ public final class Builder {
     int reqCode = random.nextInt();
 
     PendingIntent deleteIntent = PendingIntent.getBroadcast(
-        context, reqCode, intent, FLAG_UPDATE_CURRENT);
+        context, reqCode, intent, FLAG_UPDATE_CURRENT | FLAG_IMMUTABLE);
 
     builder.setDeleteIntent(deleteIntent);
   }
@@ -404,7 +405,7 @@ public final class Builder {
     int reqCode = random.nextInt();
 
     PendingIntent contentIntent = PendingIntent.getService(
-        context, reqCode, intent, FLAG_UPDATE_CURRENT);
+        context, reqCode, intent, FLAG_UPDATE_CURRENT | FLAG_IMMUTABLE);
 
     builder.setContentIntent(contentIntent);
   }
@@ -454,7 +455,7 @@ public final class Builder {
     int reqCode = random.nextInt();
 
     return PendingIntent.getService(
-        context, reqCode, intent, FLAG_UPDATE_CURRENT);
+        context, reqCode, intent, FLAG_UPDATE_CURRENT | FLAG_IMMUTABLE);
   }
 
   /**
