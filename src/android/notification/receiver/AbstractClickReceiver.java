@@ -21,7 +21,7 @@
 
 package de.appplant.cordova.plugin.notification.receiver;
 
-import android.app.IntentService;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -38,25 +38,16 @@ import static de.appplant.cordova.plugin.notification.action.Action.EXTRA_ID;
  * Abstract content receiver activity for local notifications. Creates the
  * local notification and calls the event functions for further proceeding.
  */
-abstract public class AbstractClickReceiver extends IntentService {
-
-  // Holds a reference to the intent to handle.
-  private Intent intent;
-
-  public AbstractClickReceiver() {
-    super("LocalNotificationClickReceiver");
-  }
+abstract public class AbstractClickReceiver extends Activity {
 
   /**
    * Called when local notification was clicked to launch the main intent.
    */
   @Override
-  protected void onHandleIntent(Intent intent) {
-    this.intent = intent;
+  protected void onResume() {
+    super.onResume();
 
-    if (intent == null)
-      return;
-
+    Intent intent = getIntent();
     Bundle bundle = intent.getExtras();
     Context context = getApplicationContext();
 
@@ -70,7 +61,7 @@ abstract public class AbstractClickReceiver extends IntentService {
       return;
 
     onClick(toast, bundle);
-    this.intent = null;
+    finish();
   }
 
   /**
@@ -86,13 +77,6 @@ abstract public class AbstractClickReceiver extends IntentService {
    */
   protected String getAction() {
     return getIntent().getExtras().getString(EXTRA_ID, CLICK_ACTION_ID);
-  }
-
-  /**
-   * Getter for the received intent.
-   */
-  protected Intent getIntent() {
-    return intent;
   }
 
   /**
